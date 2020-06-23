@@ -7,12 +7,14 @@ import java.io.Serializable;
 public class Note implements Serializable {
     private String Title ,contact,times;
 
-    public Note() {
+    public Note(String Title , String contact , String times) {
         this.Title = Title;
         this.contact = contact;
         this.times = times;
     }
+    public Note(){
 
+    }
     public String getTitle() {
         return Title;
     }
