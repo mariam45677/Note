@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
   public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
      private ArrayList<Note> mNotes = new ArrayList<>();
-     public  NoteRecyclerAdapter (ArrayList<Note> notes){
-          this.mNotes = notes;
+     public  NoteRecyclerAdapter (ArrayList<Note> mNotes){
+          this.mNotes = mNotes;
 
     }
 
