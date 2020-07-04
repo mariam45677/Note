@@ -2,16 +2,43 @@ package com.example.notes.Model;
 
 import android.icu.text.CaseMap;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
+@Entity(tableName = "name")
 
 public class Note implements Serializable {
-    private String Title ,contact,times;
+    @ColumnInfo(name = "title")
+    private String Title ;
+    @NonNull
 
-    public Note(String Title , String contact , String times) {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    @ColumnInfo(name = "content")
+    private String contact;
+
+    @ColumnInfo(name = "timestamp")
+    private String times;
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Note (String Title , String contact , String times) {
         this.Title = Title;
         this.contact = contact;
         this.times = times;
     }
+    @Ignore
     public Note(){
 
     }

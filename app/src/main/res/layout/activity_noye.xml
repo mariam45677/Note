@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.notes.NoyeActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/lightYellow"
+    >
+
+    <include layout="@layout/toolbar"/>
+ <com.example.notes.LindEditText
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:id="@+id/note_text"
+     android:textSize="23sp"
+     android:textColor="#000"
+     android:padding="5dp"
+     android:gravity="top"
+     android:imeOptions="flagNoExtractUi"/>
+
+
+
+
+
+
+</LinearLayout>
