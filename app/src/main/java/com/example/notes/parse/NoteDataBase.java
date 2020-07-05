@@ -1,0 +1,32 @@
+package com.example.notes.parse;
+
+import android.content.Context;
+
+import androidx.room.Database;
+import androidx.room.Entity;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+
+import com.example.notes.Model.Note;
+
+@Database(entities = {Note.class} , version = 1)
+ public abstract class NoteDataBase extends RoomDatabase {
+
+    public static final String DATABASE_NAME = "notes_db";
+
+    private static NoteDataBase instance;
+
+    static  NoteDataBase getInstance(final Context context){
+
+        if(instance == null){
+            instance = Room.databaseBuilder(
+                    context.getApplicationContext(),
+                    NoteDataBase.class,
+                    DATABASE_NAME
+            ).build();
+        }
+        return instance;
+    }
+
+    public abstract NoteDao getNoteDao();
+}

@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.notes.Model.Note;
+import com.example.notes.parse.NoteRepo;
 
 public class NoyeActivity extends AppCompatActivity implements View.OnTouchListener,GestureDetector.OnGestureListener,GestureDetector.OnDoubleTapListener, View.OnClickListener {
     private static final int EDIT_MODE_ENABLED = 1;
@@ -35,7 +36,7 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
     private Note mNoteInitial;
     private GestureDetector mGestureDetector;
     private int mMode;
-    //private NoteRepository mNoteRepository;
+    private NoteRepo mNoteRepo;
     private Note mNoteFinal;
 
 
@@ -54,6 +55,7 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
         mBackArrow = findViewById(R.id.toolbar_back_arrow);
         mCheck.setOnClickListener(this);
         mViewTitle.setOnClickListener(this);
+        mNoteRepo = new NoteRepo(this);
         //mBackArrow.setOnClickListener(this);
 
 
@@ -77,7 +79,8 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
     }
         private boolean getIncomingIntent(){
         if(getIntent().hasExtra("selectNote")){
-            mNoteInitial = (Note) getIntent().getSerializableExtra("selectNote");
+            //mNoteInitial = (Note) getIntent().getSerializableExtra("selectNote");
+            mNoteInitial = getIntent().getParcelableExtra("selected_note");
             mMode =EDIT_MODE_DISABLED;
             mIsNewNote =false;
             return  false;
@@ -86,6 +89,16 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
         mIsNewNote = true;
         return true;
 
+    }
+    private void saveChanges(){
+        if(mIsNewNote){
+           saveNewNote();
+        }else{
+            //updateNote();
+        }
+    }
+    public void saveNewNote() {
+        mNoteRepo.insertNoteTask(mNoteInitial);
     }
 
     private void setNewNoteProperties(){
@@ -100,7 +113,7 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
     private void setNoteProperties(){
         mViewTitle.setText(mNoteInitial.getTitle());
         mEditTitle.setText(mNoteInitial.getTitle());
-        mLindEditText.setText(mNoteInitial.getContact());
+      //  mLindEditText.setText(mNoteInitial.getContact());
 
     }
     private void disableContentInteraction(){
@@ -128,6 +141,7 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
         mMode = EDIT_MODE_ENABLED;
 
         enableContentInteraction();
+
     }
 
     private void disableEditMode(){
@@ -140,6 +154,7 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
 
         mMode = EDIT_MODE_DISABLED;
         disableContentInteraction();
+        saveChanges();
     }
 
 

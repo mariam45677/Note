@@ -32,7 +32,7 @@ import java.util.ArrayList;
       @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
      holder.title.setText(mNotes.get(position).getTitle());
-     holder.time.setText(mNotes.get(position).getTimes());
+    // holder.time.setText(mNotes.get(position).getTimes());
 
     }
 
