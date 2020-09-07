@@ -99,23 +99,36 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
     }
     public void saveNewNote()
     {
-        mNoteRepo.insertNoteTask(mNoteInitial);
+        
+           Log.d("TAG", "saveNewNote: "+mNoteInitial.getId()+"title"+mNoteInitial.getTitle());
+           mNoteRepo.insertNoteTask(mNoteFinal);
+      //you must add final note because initial when click btn will be null and finalnote will be has value 
+      //  mNoteRepo.insertNoteTask(mNoteInitial);
     }
 
     private void setNewNoteProperties(){
         mViewTitle.setText("Note Title");
         mEditTitle.setText("Note Title");
-
+        // all you wand to do here is remove this comment why you add  :(
+        
         //mNoteFinal = new Note();
         //mNoteInitial = new Note();
         //mNoteInitial.setTitle("Note Title");
+        
+        
+        mNoteFinal = new Note();
+        mNoteInitial = new Note();
+        mNoteInitial.setTitle("Note Title"); 
     }
 
     private void setNoteProperties(){
         mViewTitle.setText(mNoteInitial.getTitle());
         mEditTitle.setText(mNoteInitial.getTitle());
+        //THATS WRONG 
       //  mLindEditText.setText(mNoteInitial.getContact());
-
+        
+       //  wrong when write a must be e :)
+    mLindEditText.setText(mNoteInitial.getContent());
     }
     private void disableContentInteraction(){
         mLindEditText.setKeyListener(null);
