@@ -97,7 +97,8 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
             //updateNote();
         }
     }
-    public void saveNewNote() {
+    public void saveNewNote()
+    {
         mNoteRepo.insertNoteTask(mNoteInitial);
     }
 

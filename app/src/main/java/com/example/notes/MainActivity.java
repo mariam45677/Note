@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements NoteRecyclerAdapt
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             deleteNote(mNotes.get(viewHolder.getAdapterPosition()));
-
+            https://github.com/mariam45677/Note
 
         }
     };

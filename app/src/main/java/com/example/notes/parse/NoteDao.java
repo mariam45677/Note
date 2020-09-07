@@ -13,7 +13,6 @@ import com.example.notes.Model.Note;
 import java.util.List;
 
 @Dao
-
 public interface NoteDao {
 
     @Insert
