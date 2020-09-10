@@ -140,7 +140,6 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
 
         mViewTitle.setVisibility(View.GONE);
         mEditTitle.setVisibility(View.VISIBLE);
-
         mMode = EDIT_MODE_ENABLED;
 
         enableContentInteraction();
