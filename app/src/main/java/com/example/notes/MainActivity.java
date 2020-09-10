@@ -15,13 +15,14 @@ import android.view.View;
 
 import com.example.notes.Model.Note;
 import com.example.notes.parse.NoteRepo;
+import com.example.notes.parse.VerticalSpacingItemDecorator;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableMap;
 
-public class MainActivity extends AppCompatActivity implements NoteRecyclerAdapter.OnNoteListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements NoteRecyclerAdapter.OnNoteListener,FloatingActionButton.OnClickListener {
 
     private RecyclerView rec;
     private ArrayList<Note> mNotes =new ArrayList<>();
@@ -35,15 +36,14 @@ public class MainActivity extends AppCompatActivity implements NoteRecyclerAdapt
         setContentView(R.layout.activity_main);
         rec = findViewById(R.id.Recyclar);
         findViewById(R.id.fab).setOnClickListener(this);
-        mNoteRepo = new NoteRepo(this);
         //insertFakeNotes
 
-
-
-
      initRecycler();
-     insertFake();
+        mNoteRepo = new NoteRepo(this);
+
+        insertFake();
      retrieveNotes();
+        Log.d("TAG", "doinback: "+Thread.currentThread().getName());
 
 
 
@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements NoteRecyclerAdapt
             note.setTitle("title #" + i);
             note.setContent("content #: " + i);
          //   note.getTimestamp ("33 june");
+            note.setTimestamp("Jan 2019");
+
             mNotes.add(note);
 
 
@@ -81,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements NoteRecyclerAdapt
 
        rec.setLayoutManager(linearLayoutManager);
         mNoteRecycle = new NoteRecyclerAdapter(mNotes,this);
+        VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
+        rec.addItemDecoration(itemDecorator);
         rec.setAdapter(mNoteRecycle);
         new ItemTouchHelper(itemTouchHlper).attachToRecyclerView(rec);
 
@@ -101,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements NoteRecyclerAdapt
     private void deleteNote(Note note){
       mNotes.remove(note);
       mNoteRecycle.notifyDataSetChanged();
+      mNoteRepo.deleteNoteTask(note);
     }
     private ItemTouchHelper.SimpleCallback itemTouchHlper = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT) {
         @Override
@@ -111,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements NoteRecyclerAdapt
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             deleteNote(mNotes.get(viewHolder.getAdapterPosition()));
-            https://github.com/mariam45677/Note
 
         }
     };

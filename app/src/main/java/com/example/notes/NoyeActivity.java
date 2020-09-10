@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -19,9 +21,10 @@ import android.widget.TextView;
 import com.example.notes.Model.Note;
 import com.example.notes.parse.NoteRepo;
 
-public class NoyeActivity extends AppCompatActivity implements View.OnTouchListener,GestureDetector.OnGestureListener,GestureDetector.OnDoubleTapListener, View.OnClickListener {
+public class NoyeActivity extends AppCompatActivity implements View.OnTouchListener,GestureDetector.OnGestureListener,GestureDetector.OnDoubleTapListener, View.OnClickListener, TextWatcher {
     private static final int EDIT_MODE_ENABLED = 1;
     private static final int EDIT_MODE_DISABLED = 0;
+    private static final String TAG ="NoteActivity" ;
 
     // UI components
     private LindEditText mLindEditText;
@@ -56,7 +59,8 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
         mCheck.setOnClickListener(this);
         mViewTitle.setOnClickListener(this);
         mNoteRepo = new NoteRepo(this);
-        //mBackArrow.setOnClickListener(this);
+        mBackArrow.setOnClickListener(this);
+        setListner();
 
 
         if(getIncomingIntent()){
@@ -67,54 +71,52 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
             setNoteProperties();
             disableContentInteraction();
         }
-        setListner();
 
         }
+    private void saveChanges(){
+        if(mIsNewNote){
+            saveNewNote();
+        }else{
+            updateNote();
+        }
+    }
+    public void updateNote() {
+        mNoteRepo.updateNoteTask(mNoteFinal);
+    }
+    public void saveNewNote()
+    {
+        Log.d("TAG", "saveNewNote: "+mNoteInitial.getId()+"title"+mNoteInitial.getTitle());
+
+        mNoteRepo.insertNoteTask(mNoteFinal);
+        //you must add final note because initial when click btn will be null and finalnote will be has value
+        //  mNoteRepo.insertNoteTask(mNoteInitial);
+    }
 
         private void setListner(){
         mLindEditText.setOnTouchListener(this);
         mGestureDetector = new GestureDetector(this,this);
+        mViewTitle.setOnClickListener(this);
+        mCheck.setOnClickListener(this);
         mBackArrow.setOnClickListener(this);
+        mEditTitle.addTextChangedListener(this);
 
     }
         private boolean getIncomingIntent(){
         if(getIntent().hasExtra("selectNote")){
             //mNoteInitial = (Note) getIntent().getSerializableExtra("selectNote");
             mNoteInitial = getIntent().getParcelableExtra("selected_note");
-            mMode =EDIT_MODE_DISABLED;
+            mNoteFinal = new Note();
+            mNoteFinal.setTitle(mNoteInitial.getTitle());
+            mNoteFinal.setContent(mNoteInitial.getContent());
+            mNoteFinal.setTimestamp(mNoteInitial.getTimestamp());
+            mNoteFinal.setId(mNoteInitial.getId());
+            mMode =EDIT_MODE_ENABLED;
             mIsNewNote =false;
             return  false;
         }
         mMode = EDIT_MODE_ENABLED;
         mIsNewNote = true;
         return true;
-
-    }
-    private void saveChanges(){
-        if(mIsNewNote){
-           saveNewNote();
-        }else{
-            //updateNote();
-        }
-    }
-    public void saveNewNote()
-    {
-        mNoteRepo.insertNoteTask(mNoteInitial);
-    }
-
-    private void setNewNoteProperties(){
-        mViewTitle.setText("Note Title");
-        mEditTitle.setText("Note Title");
-
-        //mNoteFinal = new Note();
-        //mNoteInitial = new Note();
-        //mNoteInitial.setTitle("Note Title");
-    }
-
-    private void setNoteProperties(){
-        mViewTitle.setText(mNoteInitial.getTitle());
-        mEditTitle.setText(mNoteInitial.getTitle());
-      //  mLindEditText.setText(mNoteInitial.getContact());
 
     }
     private void disableContentInteraction(){
@@ -124,7 +126,6 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
         mLindEditText.setCursorVisible(false);
         mLindEditText.clearFocus();
     }
-
     private void enableContentInteraction(){
         mLindEditText.setKeyListener(new EditText(this).getKeyListener());
         mLindEditText.setFocusable(true);
@@ -132,6 +133,7 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
         mLindEditText.setCursorVisible(true);
         mLindEditText.requestFocus();
     }
+
     private void enableEditMode(){
         mBackArrowContainer.setVisibility(View.GONE);
         mCheckContainer.setVisibility(View.VISIBLE);
@@ -146,7 +148,7 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     private void disableEditMode(){
-       // Log.d(TAG, "disableEditMode: called.");
+         Log.d(TAG, "disableEditMode: called.");
         mBackArrowContainer.setVisibility(View.VISIBLE);
         mCheckContainer.setVisibility(View.GONE);
 
@@ -155,8 +157,46 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
 
         mMode = EDIT_MODE_DISABLED;
         disableContentInteraction();
-        saveChanges();
+        String temp = mLindEditText.getText().toString();
+        temp = temp.replace("\n","");
+        temp = temp.replace("" ,"");
+        if (temp.length() > 0) {
+
+            mNoteFinal.setTitle(mEditTitle.getText().toString());
+            mNoteFinal.setContent(mLindEditText.getText().toString());
+            String timestemp =Utility.getCurrentTimeStamp();
+            mNoteFinal.setTimestamp(timestemp);
+            Log.d(TAG, "disableEditMode: initial: " + mNoteInitial.toString());
+            Log.d(TAG, "disableEditMode: final: " + mNoteFinal.toString());
+            if(!mNoteFinal.getContent().equals(mNoteInitial.getContent()) || !mNoteFinal.getTitle().equals(mNoteInitial.getTitle())){
+                Log.d("Tag", "disableEditMode: called?");
+
+                saveChanges();
+
+            }
+        }
     }
+
+
+    private void setNewNoteProperties(){
+        mViewTitle.setText("Note Title");
+        mEditTitle.setText("Note Title");
+
+
+        mNoteFinal = new Note();
+        mNoteInitial = new Note();
+        mNoteInitial.setTitle("Note Title");
+
+    }
+
+    private void setNoteProperties(){
+        mViewTitle.setText(mNoteInitial.getTitle());
+        mEditTitle.setText(mNoteInitial.getTitle());
+        mLindEditText.setText(mNoteInitial.getContent());
+
+
+    }
+
 
 
 @Override
@@ -204,6 +244,8 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onDoubleTap(MotionEvent e) {
+        Log.d(TAG, "onDoubleTap: double tapped.");
+
         enableEditMode();
 
         return false;
@@ -260,4 +302,21 @@ public class NoyeActivity extends AppCompatActivity implements View.OnTouchListe
         if(mMode == EDIT_MODE_ENABLED){
             enableEditMode();
     }
-}}
+}
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        mViewTitle.setText(charSequence.toString());
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
+    }
+}

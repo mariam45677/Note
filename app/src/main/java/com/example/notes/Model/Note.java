@@ -11,7 +11,6 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "name")
-
 public class Note implements Parcelable {
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -24,7 +23,6 @@ public class Note implements Parcelable {
 
     @ColumnInfo(name = "timestamp")
     private String timestamp;
-
     public Note(String title, String content, String timestamp) {
         this.title = title;
         this.content = content;

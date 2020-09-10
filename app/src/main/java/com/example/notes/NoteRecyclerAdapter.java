@@ -1,5 +1,6 @@
 package com.example.notes;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,9 @@ import com.example.notes.Model.Note;
 
 import java.util.ArrayList;
 
-  public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
+import static android.content.ContentValues.TAG;
+
+public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
      private ArrayList<Note> mNotes = new ArrayList<>();
      private OnNoteListener monNoteListener;
      public  NoteRecyclerAdapter (ArrayList<Note> mNotes,OnNoteListener onNoteListener){
@@ -31,8 +34,16 @@ import java.util.ArrayList;
 
       @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-     holder.title.setText(mNotes.get(position).getTitle());
-    // holder.time.setText(mNotes.get(position).getTimes());
+          try{
+              String month = mNotes.get(position).getTimestamp().substring(0, 2);
+              month = Utility.getMonthFromNumber(month);
+              String year = mNotes.get(position).getTimestamp().substring(3);
+              String timestamp = month + " " + year;
+              holder.time.setText(timestamp);
+              holder.title.setText(mNotes.get(position).getTitle());
+          }catch (NullPointerException e){
+              Log.e(TAG, "onBindViewHolder: Null Pointer: " + e.getMessage() );
+          }
 
     }
 
@@ -55,6 +66,8 @@ import java.util.ArrayList;
 
         @Override
         public void onClick(View v) {
+            Log.d(TAG, "onClick: " + getAdapterPosition());
+
             monNoteListener.onNoteClick(getAdapterPosition());
 
         }
